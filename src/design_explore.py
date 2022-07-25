@@ -65,67 +65,6 @@ class Paths():
     # self.DESIGN_NAME= "pru_sync"
     self.DESIGN_NAME= DESIGN_NAME
 
-    self.INSTR_GEN_PATH='/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/scripts/graph_analysis_3'
-    self.INSTR_STAT_PATH= self.INSTR_GEN_PATH + '/log/instr_breakup_DPUv2_2.txt'
-    # self.INSTR_STAT_PATH= self.INSTR_GEN_PATH + '/no_backup/log/instr_breakup_DPUv2.txt'
-
-    if self.DESIGN_NAME == 'pru_sync':
-      self.DESIGN_PATH= "/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/src/PRU/sv/sync/"
-      self.SRC_RTL_PATH= self.DESIGN_PATH + "src/"
-      self.TB_PATH= self.DESIGN_PATH + "/tb_simple/"
-    elif self.DESIGN_NAME == 'pru_async_top':
-      self.DESIGN_PATH= "/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/src/PRU/sv/async/"
-      self.SRC_RTL_PATH= self.DESIGN_PATH + "src/"
-      self.TB_PATH= self.DESIGN_PATH + "/tb/"
-    else:
-      assert 0
-    self.TB_ACTIVITY_PATH= "/esat/puck1/users/nshah/vcs_simulation_data/activity.saif"
-    self.TB_LATENCY_REPORT= self.TB_PATH + "latency.txt"
-    if design_version == 1:
-      self.TB_LATENCY_NETLIST_REPORT= self.TB_PATH + "latency_netlist.txt"
-      self.TB_FUNCTIONALITY_NETLIST_REPORT= self.TB_PATH + "functionality_netlist.txt"
-    elif design_version == 2:
-      self.TB_LATENCY_NETLIST_REPORT= self.TB_PATH + "latency_netlist_2.txt"
-      self.TB_FUNCTIONALITY_NETLIST_REPORT= self.TB_PATH + "functionality_netlist_2.txt"
-    else:
-      assert 0
-    self.TB_FUNCTIONALITY_REPORT= self.TB_PATH + "functionality.txt"
-
-    self.VOLUME1 = f"/esat/puck1/users/nshah/Backend/{self.DESIGN_NAME}/"
-    if self.DESIGN_NAME == 'pru_sync':
-      if design_version == 1:
-        self.VOLUME1_NETLIST_PATH = self.VOLUME1 + 'netlists/'
-        self.VOLUME1_ACTIVITY_PATH = self.VOLUME1 + 'activity/'
-        self.VOLUME1_SDF_PATH = self.VOLUME1 + 'sdf/'
-      elif design_version == 2:
-        self.VOLUME1_NETLIST_PATH = self.VOLUME1 + 'netlists_2/'
-        self.VOLUME1_ACTIVITY_PATH = self.VOLUME1 + 'activity_2/'
-        self.VOLUME1_SDF_PATH = self.VOLUME1 + 'sdf_2/'
-      else:
-        assert 0
-    elif self.DESIGN_NAME == 'pru_async_top':
-      self.VOLUME1_NETLIST_PATH = self.VOLUME1 + 'netlists/'
-      self.VOLUME1_ACTIVITY_PATH = self.VOLUME1 + 'activity/'
-      self.VOLUME1_SDF_PATH = self.VOLUME1 + 'sdf/'
-    else:
-      assert 0
-
-    self.BACKEND_PATH= "/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/BackEnd/"
-    self.BACKEND_SOURCE_FILE= self.BACKEND_PATH + "source_tools.rc"
-    self.BACKEND_NETLIST_PATH= self.BACKEND_PATH + "DesignDataIn/netlist/"
-    self.BACKEND_SYN_PATH= self.BACKEND_PATH + "Synthesis/"
-    self.BACKEND_SYN_REPORTS_PATH= self.BACKEND_SYN_PATH + "reports/"
-    self.BACKEND_SDF_PATH= self.BACKEND_PATH + "DesignDataOut/no_backup/sdf/"
-    # self.SYNTHESIS_REPORTS_PREFIX= f"{self.DESIGN_NAME}_SVT_512_1024_32_16"
-    self.SYNTHESIS_REPORTS_PREFIX= f"{self.DESIGN_NAME}_SVT_2048_2048_64_16"
-
-    self.BACKEND_POWER_PATH= self.BACKEND_SYN_PATH
-    self.BACKEND_POWER_SCRIPT= self.BACKEND_POWER_PATH + "scripts/pwr.tcl"
-    self.BACKEND_POWER_REPORT= self.BACKEND_POWER_PATH + f"reports/{self.SYNTHESIS_REPORTS_PREFIX}_power_with_vcd.rpt"
-
-    self.OUTPUT_REPORTS_PATH= "./reports/"
-    self.OUTPUT_LATENCY_REPORT= self.OUTPUT_REPORTS_PATH + "latency.rpt"
-
   def get_volume1_reports_path_prefix(self, hw):
     return f"{self.VOLUME1_NETLIST_PATH}{self.DESIGN_NAME}_{hw.suffix()}"
 
@@ -363,9 +302,6 @@ def pru_async_top():
   write_files= True
 
   gen_activity(paths, hw, write_files, mode= 'netlist_non_activity')
-  # netlist_path = '/esat/puck1/users/nshah/Backend/pru_async_top/netlists/pru_async_top_SVT_512_1024_32_16_compiled.v'
-  # netlist_path = '/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/BackEnd/DesignDataIn/netlist/pru_async_top_SVT_2048_2048_64_16_compiled.v'
-  # power_estimation(paths, hw, write_files, netlist_path= netlist_path)
 
 def pru_sync():
   write_files= True

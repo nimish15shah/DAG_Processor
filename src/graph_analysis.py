@@ -56,7 +56,6 @@ from . import verif_helper
 from . import psdd
 from . import sparse_linear_algebra_main
 from . import write_binary
-from . import plots
 from . import design_explore
 from . import get_sizes
 

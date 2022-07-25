@@ -1,6 +1,5 @@
 //=======================================================================
 // Created by         : KU Leuven
-// Filename           : /users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/src/PRU/sv/src/pru_sync.sv
 // Author             : Nimish Shah
 // Created On         : 2019-10-21 16:53
 // Last Modified      : 

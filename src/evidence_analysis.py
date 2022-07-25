@@ -221,9 +221,9 @@ def perform_MAP(analysis_obj, evidence_nodes, query_nodes ):
   net_file = analysis_obj.global_var.NET_FILE
   MAP_file = './LOG/MAPTutorial.java'
 
-  MAP_java_command= "java -classpath ./LOG:/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Software_tools/Arithmetic_Circuit_optimization/SAMIAM_tool/samiam/:/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Software_tools/Arithmetic_Circuit_optimization/SAMIAM_tool/samiam/inflib.jar MAPTutorial"
+  MAP_java_command= command
   
-  MAP_compile_command= "javac -classpath ./LOG:/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Software_tools/Arithmetic_Circuit_optimization/SAMIAM_tool/samiam/:/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Software_tools/Arithmetic_Circuit_optimization/SAMIAM_tool/samiam/inflib.jar " + MAP_file
+  MAP_compile_command= command
    
   subprocess.check_output(MAP_compile_command, shell=True) 
   output = subprocess.check_output(MAP_java_command, shell=True) 
