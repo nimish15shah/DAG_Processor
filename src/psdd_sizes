@@ -1,0 +1,10 @@
+psdd	,raw # node,	total binary # nodes,	# leaves,	# bin arithe nodes, critical path length
+tretail    	, 6956  	, 10506  	, 1693  ,	 8813   , 49
+nltcs      	, 8855  	, 14943  	, 1316  ,	 13627  , 26
+mnist      	, 12777 	, 15784  	, 5370  ,	 10414  , 27
+msnbc      	, 29328 	, 51376  	, 4042  ,	 47334  , 28
+msweb      	, 31463 	, 53336  	, 2405  ,	 50931  , 73
+bnetflix   	, 40034 	, 64019  	, 9012  ,	 55007  , 53
+pigs        ,         , 602104  , 1325  ,  600779 , 90
+andes       ,         , 725504  , 469   ,  725035 , 84
+munin       ,         , 2051409 , 7572  ,  2043837, 326
