@@ -1,0 +1,8 @@
+numpy==1.19.4
+seaborn==0.10.1
+scipy==1.6.0
+termcolor==1.1.0
+pydot==1.4.1
+matplotlib==3.2.1
+pandas==1.1.1
+networkx==2.4
