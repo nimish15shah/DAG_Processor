@@ -55,7 +55,7 @@ module instr_mem_addr_gen (
     end else begin
       if (addr_increament) begin
         addr_reg <= addr_reg + 1 + base_instr_addr;
-        if (addr_reg % (INSTR_MEM_DEPTH-1) == 0) $display("Overflowing addr_reg at %d\n", addr_reg);
+        /* if (addr_reg % (INSTR_MEM_DEPTH-1) == 0) $display("Overflowing addr_reg at %d\n", addr_reg); */
       end 
       if (fetcher_rdy) begin
         instr_vld_to_fetcher_q[0] <= instr_vld;

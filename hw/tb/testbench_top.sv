@@ -54,23 +54,7 @@ module tbench_top;
   initial begin 
     int DUMP=0;
     int SDF=0;
-    int SAIF= 1;
-    //uvm_config_db#(virtual intf)::set(uvm_root::get(),"*","vif",intf_ins);
-    //enable wave dump
-
-    //if (DUMP) begin
-    //  $dumpfile("/volume1/users/nshah/synopsys_vcs/dump.vcd"); 
-    //  $dumpvars;
-    //  $dumpoff;
-    //end
-    
-    if (SDF) begin
-      /* $sdf_annotate("/volume1/users/nshah/bayesian_network/hardware/backend//floorplan/netlist_with_data_gating_in_regs.verilog.sdf", DUT, , , "maximum"); */
-      /* $sdf_annotate("/esat/betelgeuse1/users/nshah/bayesian_network/hardware/backend//floorplan/netlist_without_data_gating_in_regs.verilog.sdf", DUT, , , "maximum"); */
-      /* $sdf_annotate("/volume1/users/nshah/bayesian_network/hardware/backend/placeroute/optRoute.verilog.sdf", DUT, , , "maximum"); */
-      //$sdf_annotate("/volume1/users/nshah/bayesian_network/hardware/backend/gds/out/pru_async_top.verilog.sdf");
-      /* $sdf_annotate("/esat/centauri1/users/nshah/bayesian_network/hardware/backend/placeroute/pru_async_top_1.verilog.sdf", DUT, , , "maximum"); */
-    end
+    int SAIF= 0;
 
     init_object= new(intf_ins);
 
@@ -78,8 +62,6 @@ module tbench_top;
     $assertoff; // Disable assertions as soon as simulation started
     
     init_object.reset();
-    /* $enable_warnings; */
-    /* $asserton; */
     $display("Start initialization");
     init_object.init_data();
 `ifndef INSTR_PING_PONG
@@ -87,8 +69,6 @@ module tbench_top;
 `endif
     $display("Done initialization");
     
-    //Instructs VCS MX to start monitoring switching activity.
-    //$set_gate_level_monitoring("rtl_on");
     if (SAIF) begin
       $set_toggle_region("DUT");
       $toggle_reset();
@@ -103,22 +83,10 @@ module tbench_top;
     if (DUMP) $dumpoff;
     if (SAIF) begin
       $toggle_stop();
-      /* $toggle_report("/volume1/users/nshah/synopsys_vcs/activity.saif", 1.0e-9,"DUT"); */
-      $toggle_report("/esat/puck1/users/nshah/vcs_simulation_data/activity.saif", 1.0e-9,"DUT");
     end
-    init_object.check_final_output();
-    //$toggle_report("/volume1/users/nshah/synopsys_vcs/activity.saif", 1.0e-9,"pru_async_top");
+    /* init_object.check_final_output(); */
     $finish;
   end
-
-  //initial $sdf_annotate("./no_backup/activity.sdf", pru_async_top);
- 
- //---------------------------------------
- //calling test
- //---------------------------------------
- //initial begin 
- //  run_test("testprogram");
- //end
 
 endmodule : tbench_top
 

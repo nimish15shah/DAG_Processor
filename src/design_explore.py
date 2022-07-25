@@ -20,9 +20,7 @@ import numpy as np
 
 from mpl_toolkits import mplot3d
 
-path_to_module= '/users/micas/nshah/Downloads/PhD/Academic/Bayesian_Networks_project/Hardware_Implementation/Auto_RTL_Generation/HW_files/scripts/graph_analysis_3/src/openmp'
-sys.path.insert(0, path_to_module)
-import get_sizes
+from . import get_sizes
 
 import logging
 logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.INFO)
@@ -172,22 +170,21 @@ class HwConfDPU():
 class Workloads():
   def __init__(self):
     self.workloads= [
-        # DPUv2 paper
-        # 'tretail',
-        # 'mnist',
-        # 'nltcs',
-        # 'msweb',
-        # 'msnbc',
-        # 'bnetflix',
+        'tretail',
+        'mnist',
+        'nltcs',
+        'msweb',
+        'msnbc',
+        'bnetflix',
 
-        # 'HB/bp_200', # 240 dummy nodes / 14082 total nodes # HB_bp_200              , nnzA , 4614     , colsA , 822    , n_compute , 8406      ,critical_path_len, 46 
-        # 'HB/west2021', # 174 / 18444 # HB_west2021            , nnzA , 6090     , colsA , 2021   , n_compute , 10159     ,critical_path_len, 44   
-        # 'MathWorks/Sieber', # 0 # MathWorks_Sieber       , nnzA , 12529    , colsA , 2290   , n_compute , 22768     ,critical_path_len, 80 
-        # 'HB/jagmesh4', # Dummy nodes not needed # HB_jagmesh4            , nnzA , 22600    , colsA , 1440   , n_compute , 43760     ,critical_path_len, 215  
-        # 'Bai/rdb968', # :Dummy nodes not needed #Bai_rdb968             , nnzA , 25793    , colsA , 968    , n_compute , 50618     ,critical_path_len, 278 
-        # 'Bai/dw2048', # 0 Bai_dw2048             , nnzA , 40644    , colsA , 2048   , n_compute , 79240     ,critical_path_len, 309  
-        'pigs',
-        'andes',
+        'HB/bp_200', # 240 dummy nodes / 14082 total nodes # HB_bp_200              , nnzA , 4614     , colsA , 822    , n_compute , 8406      ,critical_path_len, 46 
+        'HB/west2021', # 174 / 18444 # HB_west2021            , nnzA , 6090     , colsA , 2021   , n_compute , 10159     ,critical_path_len, 44   
+        'MathWorks/Sieber', # 0 # MathWorks_Sieber       , nnzA , 12529    , colsA , 2290   , n_compute , 22768     ,critical_path_len, 80 
+        'HB/jagmesh4', # Dummy nodes not needed # HB_jagmesh4            , nnzA , 22600    , colsA , 1440   , n_compute , 43760     ,critical_path_len, 215  
+        'Bai/rdb968', # :Dummy nodes not needed #Bai_rdb968             , nnzA , 25793    , colsA , 968    , n_compute , 50618     ,critical_path_len, 278 
+        'Bai/dw2048', # 0 Bai_dw2048             , nnzA , 40644    , colsA , 2048   , n_compute , 79240     ,critical_path_len, 309  
+        # 'pigs',
+        # 'andes',
         # 'munin3_spu',
         # 'mildew_spu',
 
@@ -623,12 +620,6 @@ def plot_utilization(log_d, savefig, path):
   else:
     plt.show()
 
-
-          
-
-
-
-
 def sota_comparison(log_d, savefig= False):
   workloads= Workloads().workloads
   workloads= [w.replace('/', '_') for w in workloads]
@@ -880,10 +871,10 @@ def plot_instr_stat_all_w(log_d, tup, savefig, path):
     'HB_jagmesh4'        : 'jagmesh4'     , # Du
     'Bai_rdb968'         : 'rdb968'      , # :Du
     'Bai_dw2048'         : 'dw2048'      , # 0 B
-    'pigs'               : 'pigs'      ,
-    'andes'               : 'andes'      ,
-    'munin3_spu'               : 'munin'      ,
-    'mildew_spu'               : 'mildew'      ,
+    # 'pigs'               : 'pigs'      ,
+    # 'andes'               : 'andes'      ,
+    # 'munin3_spu'               : 'munin'      ,
+    # 'mildew_spu'               : 'mildew'      ,
     }
 
   map_w_to_best_fitness_wt, _ = log_d[tup].get_best_fitness_wt_and_latency()
@@ -937,7 +928,7 @@ def plot_instr_stat_all_w(log_d, tup, savefig, path):
 
   df = pd.DataFrame(data_d)
 
-  fig_dims = (20, 2.8)
+  fig_dims = (4.5, 2.8)
   # plt.figure(figsize=fig_dims) 
 
   sns.set(style= 'white')

@@ -10,37 +10,10 @@
 //=======================================================================
 
 
-`define INSTR_PING_PONG
+/* `define INSTR_PING_PONG */
 
 `ifndef GENERAL_PKG
   `define GENERAL_PKG
-
-  `ifdef GATE_NETLIST
-    `define USE_SRAM_MACRO
-  `endif
-
-  // comment the following for synthesis
-  /* `define VERIFICATION */
-  
-  /* `define TSMC_INITIALIZE_MEM // initize memory macros from a file */
-
-  `define USE_SRAM_MACRO // uncomment to use sram macros for memory
-
-  `ifdef VERIFICATION
-    `define USE_SRAM_VERILOG_MODELS
-  `endif
-
-// Do not enable following for synthesis, only use for simulation
-  `ifdef USE_SRAM_VERILOG_MODELS
-    `define UNIT_DELAY // For faster SRAM sims */
-    `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb8192x32m8swaso_180a/VERILOG/ts1n28hpcphvtb8192x32m8swaso_180a_tt0p9v25c.v"
-    `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb1024x32m4swaso_180a/VERILOG/ts1n28hpcphvtb1024x32m4swaso_180a_tt0p9v25c.v"
-    `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb512x32m4swaso_180a/VERILOG/ts1n28hpcphvtb512x32m4swaso_180a_tt0p9v25c.v"
-    `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb256x32m4swaso_180a/VERILOG/ts1n28hpcphvtb256x32m4swaso_180a_tt0p9v25c.v"
-    `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb1024x24m4swaso_180a/VERILOG/ts1n28hpcphvtb1024x24m4swaso_180a_tt0p9v25c.v"
-    `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb512x24m4swaso_180a/VERILOG/ts1n28hpcphvtb512x24m4swaso_180a_tt0p9v25c.v"
-  //  `include "/users/micas/micas/design/tsmc28hpcplus/memories/Front_end/ts1n28hpcphvtb256x24m4swaso_180a/VERILOG/ts1n28hpcphvtb256x24m4swaso_180a_tt0p9v25c.v"
-  `endif
 
   package general_pkg;
     parameter RESET_STATE= 0;
@@ -52,18 +25,18 @@
 `ifndef HW_CONFIG_PKG
   `define HW_CONFIG_PKG
   /* `define REG_BANK_DEPTH 32 */
-  `define REG_BANK_DEPTH 128
+  `define REG_BANK_DEPTH 32
   /* `define TREE_DEPTH 2 */
   /* `define N_TREE 8 */
   `define TREE_DEPTH 3
   `define MIN_DEPTH 2
   `define N_TREE 8
-  /* `define DATA_MEM_SIZE 512 // KB */
-  /* `define INSTR_MEM_SIZE 512 // KB */
+  `define DATA_MEM_SIZE 512 // KB
+  `define INSTR_MEM_SIZE 2048 // KB
   /* `define DATA_MEM_SIZE 4096 // KB */
   /* `define INSTR_MEM_SIZE 8192 // KB */
-  `define DATA_MEM_SIZE 2048 // KB
-  `define INSTR_MEM_SIZE 512 // KB
+  /* `define DATA_MEM_SIZE 2048 // KB */
+  /* `define INSTR_MEM_SIZE 512 // KB */
   `define SRAM_MACRO_WIDTH 32 // b
 
   /* `define SRAM_RF */

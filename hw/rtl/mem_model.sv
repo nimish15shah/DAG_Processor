@@ -372,6 +372,62 @@ endmodule
   //===========================================
   //       Functional model for memory
   //===========================================
+  //===========================================
+  //       Functional model for memory
+  //===========================================
+module sp_mem_model #(
+  parameter DATA_L= 8,
+  parameter ADDR_L= 8,
+  parameter RD_LATENCY
+)
+(
+  input clk,
+  input rst,
+
+  input slp,
+  input sd,
+  
+  input wr_en,
+  input ch_en,
+  input [ADDR_L - 1 : 0] addr,
+  input [DATA_L - 1 : 0] wr_data,
+  output [DATA_L - 1 : 0] rd_data
+); 
+  
+  logic [2**ADDR_L - 1 : 0] [DATA_L - 1 : 0] data_array;
+  logic [DATA_L - 1 : 0] rd_data_based_on_en;
+  logic [RD_LATENCY - 1 : 0] [DATA_L - 1 : 0] rd_data_delayed;
+
+  always_ff @(posedge clk or negedge rst) begin
+    if (rst== RESET_STATE) begin
+      data_array <= 'x;
+    end else begin
+      if (wr_en) begin
+        data_array[addr] <= wr_data;
+      end
+    end
+  end
+
+  always_ff @(posedge clk or negedge rst) begin
+    if (rst== RESET_STATE) begin
+      rd_data_delayed <= 'x;
+    end else begin
+      if (ch_en) begin
+        rd_data_delayed[0]<= rd_data_based_on_en;
+        for (integer i=1; i< RD_LATENCY; i=i+1) begin
+          rd_data_delayed[i] <= rd_data_delayed[i-1];
+        end
+      end
+    end
+  end
+  
+  assign rd_data_based_on_en= wr_en ? 'x : data_array[addr];
+
+  assign rd_data = rd_data_delayed[RD_LATENCY - 1];
+endmodule
+
+
+
 module my_memory #(
   parameter DATA_L= 8,
   parameter ADDR_L= 8,
@@ -400,7 +456,6 @@ module my_memory #(
       sp_mem_model #(
         .DATA_L (DATA_L),
         .ADDR_L (ADDR_L),
-        .INIT_FILE_PATH_PREFIX ({INIT_FILE_PATH_PREFIX, convertIntToChars(mem_i) ,".txt"}),
         .RD_LATENCY (RD_LATENCY)
       ) SP_MEM_MODEL_INS
       (
@@ -417,84 +472,9 @@ module my_memory #(
         .ch_en   (ch_en  [mem_i])
       ); 
     end
-    
-    localparam NUM_CHARS = 3;
-
-    function [NUM_CHARS*8-1:0] convertIntToChars(
-        input int x
-    );
-        int i;
-
-        convertIntToChars = 0;
-
-        if (x < 0 || x >= 10 ** NUM_CHARS) begin
-            $error("invalid value for x! got: %0d", x);
-        end
-
-        for (i = 0; i < NUM_CHARS; i++) begin
-            convertIntToChars [8*i +: 8] = "0" + (x / 10 ** i) % 10; 
-        end
-    endfunction
   endgenerate
 endmodule
 
-module sp_mem_model #(
-  parameter DATA_L= 8,
-  parameter ADDR_L= 8,
-  parameter INIT_FILE_PATH_PREFIX= "dummy_prefix",
-  parameter RD_LATENCY
-)
-(
-  input clk,
-  input rst,
-
-  input slp,
-  input sd,
-  
-  input wr_en,
-  input ch_en,
-  input [ADDR_L - 1 : 0] addr,
-  input [DATA_L - 1 : 0] wr_data,
-  output [DATA_L - 1 : 0] rd_data
-); 
-  
-  logic [DATA_L - 1 : 0]  data_array  [0 : 2**ADDR_L - 1];
-  logic [DATA_L - 1 : 0]  data_array_init  [0 : 2**ADDR_L - 1];
-  logic [DATA_L - 1 : 0] rd_data_based_on_en;
-  logic [RD_LATENCY - 1 : 0] [DATA_L - 1 : 0] rd_data_delayed;
-
-  always_ff @(posedge clk or negedge rst) begin
-    if (rst== RESET_STATE) begin
-      data_array <= data_array_init;
-    end else begin
-      if (wr_en) begin
-        data_array[addr] <= wr_data;
-      end
-    end
-  end
-
-  always_ff @(posedge clk or negedge rst) begin
-    if (rst== RESET_STATE) begin
-      rd_data_delayed <= 'x;
-    end else begin
-      if (ch_en) begin
-        rd_data_delayed[0]<= rd_data_based_on_en;
-        for (integer i=1; i< RD_LATENCY; i=i+1) begin
-          rd_data_delayed[i] <= rd_data_delayed[i-1];
-        end
-      end
-    end
-  end
-  
-  assign rd_data_based_on_en= wr_en ? 'x : data_array[addr];
-
-  assign rd_data = (RD_LATENCY > 0) ? rd_data_delayed[RD_LATENCY - 1] : rd_data_based_on_en;
-
-  initial begin
-    $readmemb(INIT_FILE_PATH_PREFIX, data_array_init);
-  end
-
-endmodule
 `endif
 
 

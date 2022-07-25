@@ -38,8 +38,8 @@
       $value$plusargs("NET_NAME=%s", net);
       $value$plusargs("PREFIX=%s", prefix);
       $value$plusargs("W_CONFLICT=%d", w_conflict);
-      prefix = {prefix, net, "/"};
-      $sformat(suffix, "D%0d_N%0d_%0d_%0d_%0d_%0d_%0d_%0d%0d%0d%0d.00.00.01000False", TREE_DEPTH, N_TREE, N_BANKS, BANK_DEPTH, (2**DATA_MEM_ADDR_L), DATA_MEM_ADDR_L, BIT_L, PIPE_STAGES, TREE_DEPTH, `MIN_DEPTH, w_conflict);
+      prefix = {prefix, "/"};
+      $sformat(suffix, "D%0d_N%0d_%0d_%0d_%0d_%0d_%0d_%0d%0d%0d%0d.00.00.0300False", TREE_DEPTH, N_TREE, N_BANKS, BANK_DEPTH, (2**DATA_MEM_ADDR_L), DATA_MEM_ADDR_L, BIT_L, PIPE_STAGES, TREE_DEPTH, `MIN_DEPTH, w_conflict);
 
       $display(suffix);
 

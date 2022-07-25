@@ -170,10 +170,10 @@ class hw_details_class():
     self.MEM_LOAD_CONST           = True
     self.w_conflict               = 1
 
-    # self.SCRATCH_PAD_SIZE         = 256 # in kB
-    # self.PARAM_MEM_SIZE           = 256 #kB
-    self.SCRATCH_PAD_SIZE         = 1024 # in kB
-    self.PARAM_MEM_SIZE           = 1024 #kB
+    self.SCRATCH_PAD_SIZE         = 256 # in kB
+    self.PARAM_MEM_SIZE           = 256 #kB
+    # self.SCRATCH_PAD_SIZE         = 1024 # in kB
+    # self.PARAM_MEM_SIZE           = 1024 #kB
     self.mem_addr_bits            = useful_methods.clog2(int(((self.SCRATCH_PAD_SIZE + self.PARAM_MEM_SIZE) * 1024/4) / (self.n_banks)))
     self.mem_bank_depth           = 2**self.mem_addr_bits
     self.base_scratch_pad_addr    = 0

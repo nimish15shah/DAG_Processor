@@ -369,8 +369,7 @@ def print_instr_breakup(global_var, net, instr_ls_obj, conflicts_in, conflicts_o
   
   msg= f"net, {net.replace( '/', '_')}, tree_depth, {hw_details.max_depth}, n_banks, {hw_details.n_banks}, reg_bank_depth, {hw_details.reg_bank_depth}, total, {total}, bb, {bb}, initial_ld, {initial_ld_cnt}, intermediate_ld, {intermediate_ld_cnt}, intermediate_st, {store}, shift, {shift_cnt}, nop, {nop}, fitness_wt_distance, {hw_details.fitness_wt_distance}, out_port_mode, {hw_details.out_port_mode}"
 
-  print(msg)
-  fp= open(global_var.REPORTS_PATH + 'instr_breakup_DPUv2_dummy.txt', 'a+')
+  fp= open(global_var.REPORTS_PATH + 'instr_breakup.txt', 'a+')
   print(msg, file=fp, flush= True)
   fp.close()
 

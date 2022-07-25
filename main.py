@@ -36,7 +36,7 @@ def main(argv=None):
         'try', \
         'compile', \
         'rtl_sim', \
-        'gen_plots', \
+        'plot_charts', \
         ] , \
         help='mode')
 

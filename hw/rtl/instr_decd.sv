@@ -639,8 +639,8 @@ module instr_fetcher (
         first_nonvalid_bit_d = first_nonvalid_bit_q - curr_instr_len;
       end
 
-      assert (curr_instr_len <= first_nonvalid_bit_q) else $warning(1);
-      assert ($bits(instr_reg_q) - $bits(instr) - first_nonvalid_bit_q + curr_instr_len >= 0);
+      /* assert (curr_instr_len <= first_nonvalid_bit_q) else $warning(1); */
+      /* assert ($bits(instr_reg_q) - $bits(instr) - first_nonvalid_bit_q + curr_instr_len >= 0); */
 
     end else begin // Instruction not cosumed by decoder
       new_instr_shift_cnt=  $bits(instr_reg_q) - $bits(instr) - first_nonvalid_bit_q; 
@@ -652,8 +652,8 @@ module instr_fetcher (
       end
       assert ($bits(instr_reg_q) - $bits(instr) - first_nonvalid_bit_q >= 0);
     end // if (send_2_decd_en)
-    assert (first_nonvalid_bit_d <= 2*INSTR_L) else $warning(1, "first_nonvalid_bit_d not set properly");
-    assert (first_nonvalid_bit_q <= 2*INSTR_L) else $warning(1, "first_nonvalid_bit_q not set properly");
+    /* assert (first_nonvalid_bit_d <= 2*INSTR_L) else $warning(1, "first_nonvalid_bit_d not set properly"); */
+    /* assert (first_nonvalid_bit_q <= 2*INSTR_L) else $warning(1, "first_nonvalid_bit_q not set properly"); */
   end
 
   // instr_reg_d based on mux_sel
@@ -665,7 +665,7 @@ module instr_fetcher (
         NEW     : instr_reg_d[i] = new_instr_shifted[i];
         default : begin 
             instr_reg_d[i] = 1'bx;
-            $warning(1);
+            /* $warning(1); */
           end
       endcase
     end
@@ -687,7 +687,7 @@ module instr_fetcher (
       ST_8_L     : instr_reg_shifted = instr_reg_q >> ST_8_L     ; //begin end
       ST_L       : instr_reg_shifted = instr_reg_q >> ST_L       ; //begin end
       BB_L       : instr_reg_shifted = instr_reg_q >> BB_L       ; //begin end      
-      default : $warning;
+      /* default : $warning; */
     endcase
   end
 
@@ -738,9 +738,9 @@ module instr_len_decode( input [OPCODE_L-1 : 0] opcode, output [$clog2(INSTR_L) 
       ST_8_OPCODE : curr_instr_len_pre       = ST_8_L     ;
       ST_OPCODE   : curr_instr_len_pre       = ST_L       ;
       BB_OPCODE   : curr_instr_len_pre       = BB_L       ;
-      default : begin 
-        $warning(1, "Unrecognized opcode");
-      end
+      /* default : begin */ 
+      /*   $warning(1, "Unrecognized opcode"); */
+      /* end */
     endcase
   end
 

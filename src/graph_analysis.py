@@ -9,6 +9,14 @@
 #                      
 #=======================================================================
 
+import csv
+import pandas as pd
+from statistics import mean
+from matplotlib import pyplot as plt
+import matplotlib
+import seaborn as sns
+import numpy as np
+import csv
 import global_var
 import pickle
 import queue
@@ -48,6 +56,9 @@ from . import verif_helper
 from . import psdd
 from . import sparse_linear_algebra_main
 from . import write_binary
+from . import plots
+from . import design_explore
+from . import get_sizes
 
 def clog2(num):
   """
@@ -145,76 +156,25 @@ class graph_analysis_c():
         
         n_outputs= None
         final_output_node_set = set([self.head_node])
-        chunk_len_threshold= 10000
+        chunk_len_threshold= 100000
         return_dict= decompose.decompose_scalable(self.graph, self.graph_nx, self.hw_depth, final_output_node_set, self.leaf_list, n_outputs, decompose_param_obj, hw_details, out_mode, chunk_len_threshold)
         self.BB_graph= return_dict['BB_graph'] 
         self.BB_graph_nx= return_dict['BB_graph_nx'] 
       
         list_of_depth_lists= hw_details.list_of_depth_lists
-        #hw_details_str= out_mode + '_' + str(fitness_wt_in) + str(fitness_wt_out) + str(fitness_wt_distance) + '_'.join([''.join(str(y) for y in x) for x in list_of_depth_lists])
-        #print hw_details_str 
-        fname= create_decompose_file_name(hw_details, decompose_param_obj)
         
-        # Misc. information to store for next steps
-        misc= {}
-  #      misc['best_hw_set']= return_dict['best_hw_set']
-
-        # files_parser.write_BB_graph_and_main_graph(self.global_var, self.hw_depth, fname, self.graph, self.graph_nx, self.BB_graph, self.BB_graph_nx, misc)
-
         logger.info("Done step 1 : Decomposition into blocks")
         sys.setrecursionlimit(20000)
         
         # Do Step 2, 3, and 4 of the compiler
         schedule_param_obj= schedule_param(hw_details.SCHEDULING_SEARCH_WINDOW, hw_details.RANDOM_BANK_ALLOCATE)
 
-        # decompose_fname= create_decompose_file_name(hw_details, decompose_param_obj)
-    
-        # -- read decompose outputs
-        # self.BB_graph, self.graph, self.BB_graph_nx, self.graph_nx, misc = \
-        #     files_parser.read_BB_graph_and_main_graph(self.global_var, self.hw_depth, decompose_fname)
-      
         # -- perform scheduling
-        # map_param_to_addr, key: leaf node, val: (MEMORY address, bank)
-        # map_output_to_addr, key: head node, val: (register bank, pos), since there is no store at the end
         instr_ls_obj, map_param_to_addr, map_output_to_addr= scheduling_gather.instruction_gen(net, self.graph, self.BB_graph, self.global_var,\
             self.leaf_list, self.head_node, misc, hw_details,\
             write_asm= False, make_vid= False)  
 
-        tot_reg_rd=0
-        tot_reg_wr=0
-        for bb in list(self.BB_graph.values()):
-          #assert len(bb.out_list) <= 4
-          tot_reg_rd += len(bb.in_list_unique)
-          tot_reg_wr += len(bb.out_list)
-        
-        print('Reg_rd:', tot_reg_rd, 'Reg_wr:', tot_reg_wr)
-
-        #reporting_tools.reporting_tools.write_c_for_asip_2('./LOG/asip.c', self.BB_graph, self.graph, 16, self.leaf_list)
-        #reporting_tools.reporting_tools.write_c_for_asip('./LOG/vect_' + str(self.net)+'_gcc.c', self.graph)
-        #reporting_tools.reporting_tools.write_vect_c('./LOG/vect_'+ str(self.net) +'.c', self.graph, self.BB_graph)
-        
-        # logger.info("Not writing schedule to any file.")
-        # exit(0)
-
         schedule_fname= create_schedule_name(hw_details, schedule_param_obj, decompose_param_obj)
-        # files_parser.write_schedule(self.global_var, self.hw_depth, schedule_fname, list(instr_ls_obj.instr_ls), map_param_to_addr, map_output_to_addr)
-
-
-        # schedule_param_obj= schedule_param(hw_details.SCHEDULING_SEARCH_WINDOW, hw_details.RANDOM_BANK_ALLOCATE)
-
-        # schedule_fname= create_schedule_name(hw_details, schedule_param_obj, decompose_param_obj)
-        # instr_ls, map_param_to_addr, map_output_to_addr = src.files_parser.read_schedule(self.global_var, self.hw_depth, schedule_fname)
-        # assert self.head_node in map_output_to_addr
-
-        # # reduction in instruction length becuase of the automatic write address generation
-        # prog_len= 0
-        # prog_len_wo_opt= 0
-        # for instr in instr_ls:
-        #   instr_len, instr_len_wo_opt = instr.len_w_and_wo_auto_wr_addr(hw_details.max_depth, hw_details.n_banks, hw_details.reg_bank_depth)
-        #   prog_len += instr_len
-        #   prog_len_wo_opt += instr_len_wo_opt
-
-        # logger.info(f"net, {self.net}, d, {hw_details.max_depth}, b, {hw_details.n_banks}, r, {hw_details.reg_bank_depth}, Program length (bits), {prog_len}, Program length w/o optimization, {prog_len_wo_opt}, reduction, {(prog_len_wo_opt - prog_len) / prog_len_wo_opt}")
 
         #===========================================
         #       Binary generation
@@ -227,45 +187,29 @@ class graph_analysis_c():
 
         # parameter initialization and golden output files
         map_addr_to_val= verif_helper.pru_sync(self.graph, prefix, hw_details, instr_ls, map_param_to_addr, map_output_to_addr, write_files = True)
-
       exit(0) 
 
-    if mode=="ac_eval":
-      verif_helper.init_leaf_val(self.graph, mode='all_1s')
-      return_val= ac_eval.ac_eval(self.graph, self.head_node, elimop= 'PROD_BECOMES_SUM')
-      
-      print('AC eval:', return_val)
+    if mode=="plot_charts":
+      # Plot instruction breakdown
+      hw = design_explore.HwConf(8, 3, 2, 32)
+      log_obj = design_explore.LogInfo(hw)
+      log_d= {}
+      log_d[hw.tuple_for_key()] = log_obj
+      design_explore.get_instr_stat(global_var.REPORTS_PATH + 'instr_breakup.txt', log_d)
+
+      path= global_var.PLOTS_PATH + 'instruction_breakdown.pdf'
+      savefig= True
+      tup = (8, 3, 32)
+      design_explore.plot_instr_stat_all_w(log_d, tup, savefig, path)
+
+      # Plot throughput
+      log_path= global_var.REPORTS_PATH + 'rtl_latency.txt'
+      plot_path= global_var.PLOTS_PATH + 'throughput.pdf'
+      savefig= True
+      plot_throughput(log_path, plot_path, log_d, savefig)
+
       exit(0)
 
-  def count_edges(self, graph_nx, list_of_partitions, skip_leafs= False):
-    map_n_to_pe= {}
-
-    for pe, partitions in enumerate(list_of_partitions):
-      for partition in partitions:
-        for n in partition:
-          assert n not in map_n_to_pe
-          map_n_to_pe[n]= pe
-
-    global_edges= 0
-    local_edges= 0
-    for src, dst in graph_nx.edges():
-      if src in map_n_to_pe: # not a leaf
-        if map_n_to_pe[src] == map_n_to_pe[dst]:
-          local_edges += 1
-        else:
-          global_edges += 1
-      else: # leaf
-        if not skip_leafs:
-          local_edges += 1
-
-    logger.info(f"total_edges: {graph_nx.number_of_edges()}, global_edges: {global_edges}, local_edges: {local_edges}")
-
-  def process_data(self, verbose=0):
-    #self.process_depth_data()
-    self.avg_node_reuse = analysis_node_reuse._node_reuse_profile(self.graph, self.head_node)
-    if (verbose):
-      print("Avg. node reuse: ", self.avg_node_reuse)
-  
   def _add_node(self, graph, node_key, child_key_list, op_type):
     # Add the node and update it's child list
     node_obj= common_classes.node(node_key)
@@ -376,70 +320,216 @@ def create_decompose_file_name(hw_details, decompose_param_obj):
 
   return fname
 
-def par_for_sptrsv(name_ls, thread_ls, log_path, openmp_prefix, suffix):
-  line_number= 49
-  run_log= open(log_path, 'a+')
+def get_latency(path, log_d, mode= 'post_rtl_sim'):
+  assert mode in ['post_rtl_sim', 'post_compile']
 
-  cmd= "cd src/openmp/; make set_env"
-  os.system(cmd)
+  if mode == 'post_rtl_sim':
+    with open(path, 'r') as fp:
+      data = csv.reader(fp, delimiter=',')
+      data= list(data)
 
-  for mat in name_ls:
-    for th in thread_ls:
-      mat = mat.replace('/', '_')
-      data_path= openmp_prefix + f"{mat}_{suffix}_{th}.c"
-      data_path = data_path.replace('/', '\/')
-      openmp_main_file= "./src/openmp/par_for_sparse_tr_solve_coarse.cpp"
-      cmd= f"sed -i '{line_number}s/.*/#include \"{data_path}\"/' {openmp_main_file}"
-      os.system(cmd)
-      cmd= "cd src/openmp; make normal_cpp"
-      err= os.system(cmd)
-      if err:
-        print(f"Error in compilation {mat}, {th}")
-        print(f"{mat},{th},Error compilation", file= run_log, flush= True)
+    #idx
+    name_idx= 1
+    n_tree_idx         = 3
+    tree_depth_idx     = 5
+    n_banks_idx        = 7
+    reg_bank_depth_idx = 9
+    latency_idx        = 19
+
+    for d in data:
+      if len(d) < latency_idx:
+        logger.info("weird line")
+        continue
+
+      name           = d[name_idx].strip()
+      n_tree         = int(d[n_tree_idx         ])
+      tree_depth     = int(d[tree_depth_idx     ])
+      n_banks        = int(d[n_banks_idx        ])
+      reg_bank_depth = int(d[reg_bank_depth_idx ])
+      latency        = int(float(d[latency_idx        ]))
+
+      tuple_for_key = (n_tree, tree_depth, reg_bank_depth)
+
+      if tuple_for_key in log_d:
+        obj= log_d[tuple_for_key]
+        obj.map_workload_to_latency[name] = latency
       else:
-        logger.info("Excuting 1k iterations of parallel code...")
-        cmd= "cd src/openmp; make run"
-        output= subprocess.check_output(cmd, shell=True)
-        # os.system(cmd)
-        output = str(output)
-        output = output[:-3]
-        output= output[output.find('N_layers'):]
-        msg= f"{mat},{th},{output}"
-        print(msg, file= run_log, flush= True)
-        logger.info(f"Run statistics: {msg}")
-        logger.info(f"Adding result to log file: {log_path}")
-    
+        logger.info(f"n_tree, tree_depth_idx, reg_bank_depth of : {tuple_for_key} is not available in log_d")
 
-def par_for_psdd(name_ls, thread_ls, log_path, openmp_prefix, suffix):
-  line_number= 8
-  run_log= open(log_path, 'a+')
+  elif mode == 'post_compile':
+    with open(path, 'r') as fp:
+      data = csv.reader(fp, delimiter=',')
+      data= list(data)  
 
-  cmd= "cd src/openmp/; make set_env"
-  os.system(cmd)
-  for net in name_ls:
-    for th in thread_ls:
-      data_path= f"{openmp_prefix}{net}_{suffix}_{th}.c" 
-      data_path = data_path.replace('/', '\/')
-      openmp_main_file= "./src/openmp/par_for_v2.cpp"
-      cmd= "sed -i '8s/.*/#include \"" + data_path + f"\"/' {openmp_main_file}"
-      logger.info(f"Modifying main openmp file: {openmp_main_file} to include the header file {data_path}")
-      print(cmd)
-      os.system(cmd)
-      cmd= "cd src/openmp; make normal_cpp_psdd"
-      err= os.system(cmd)
-      if err:
-        print(f"Error in compilation {net}, {th}")
-        print(f"{net},{th},Error compilation", file= run_log, flush= True)
+    #initialize latency to 'inf'
+    for _, obj in log_d.items():
+      obj.map_workload_to_latency = defaultdict(lambda : float('inf'))
+
+    #idx
+    name_idx            = 1
+    tree_depth_idx      = 3
+    n_banks_idx         = 5
+    reg_bank_depth_idx  = 7
+    total_idx           = 9
+    bb_idx              = 11
+    initial_ld_idx      = 13
+    intermediate_ld_idx = 15
+    intermediate_st_idx = 17
+    shift_idx           = 19
+    nop_idx             = 21
+    fitness_wt_distance_idx= 23
+
+    for d in data:
+      if len(d) < fitness_wt_distance_idx:
+        continue
+
+      name                = d[name_idx].strip()
+      tree_depth          = int(d[tree_depth_idx     ])
+      n_banks             = int(d[n_banks_idx        ])
+      reg_bank_depth      = int(d[reg_bank_depth_idx ])
+      total               = int(d[total_idx        ])
+      bb              = int(d[bb_idx             ])
+      initial_ld      = int(d[initial_ld_idx     ])
+      intermediate_ld = int(d[intermediate_ld_idx])
+      intermediate_st = int(d[intermediate_st_idx])
+      shift           = int(d[shift_idx          ])
+      nop             = int(d[nop_idx            ])
+      fitness_wt_distance= float(d[fitness_wt_distance_idx])
+      
+      assert total == bb + initial_ld + intermediate_st + intermediate_ld + shift + nop
+
+      n_tree = int(n_banks / (2**tree_depth))
+      tuple_for_key = (n_tree, tree_depth, reg_bank_depth)
+
+      if tuple_for_key in log_d:
+        obj= log_d[tuple_for_key]
+        if total < obj.map_workload_to_latency[name]:
+          obj.map_workload_to_latency[name] = total
       else:
-        logger.info("Excuting 10k iterations of parallel code...")
-        cmd= "cd src/openmp; make run_psdd"
-        output= subprocess.check_output(cmd, shell=True)
-        # os.system(cmd)
-        output = str(output)
-        output = output[:-3]
-        output= output[output.find('N_layers'):]
-        msg= f"{net},{th},{output}"
-        print(msg, file= run_log, flush= True)
-        logger.info(f"Run statistics: {msg}")
-        logger.info(f"Adding result to log file: {log_path}")
+        pass
+        # logger.info(f"n_tree, tree_depth_idx, reg_bank_depth of : {tuple_for_key} is not available in log_d")
+
+    # Assert
+    workloads= Workloads().workloads
+    workloads= [w.replace('/', '_') for w in workloads]
+    for tuple_for_key, obj in log_d.items():
+      for w in workloads:
+        assert w in obj.map_workload_to_latency, f"paths.INSTR_STAT_PATH does not contain a log for {w} for {tuple_for_key} configuration"
+  else:
+    assert 0
+
+def plot_throughput(log_path, plot_path, log_d, savefig):
+  get_latency(log_path, log_d, mode= 'post_rtl_sim')
+
+  map_workload_to_compute = get_sizes.get_psdd_sizes()
+  map_mat_to_details = get_sizes.get_matrix_sizes()
+  for key, obj in map_mat_to_details.items():
+    map_workload_to_compute[key] = obj
+
+  map_w_to_throughput_this_work = {w : map_workload_to_compute[w].compute/(3.3*lat) for w, lat in log_d[(8, 3, 32)].map_workload_to_latency.items()} # GOPS
+
+  system= []
+  throughput= []
+  workload= []
+
+  for w, t in map_w_to_throughput_this_work.items():
+    system.append('This work')
+    throughput.append(t)
+    workload.append(w)
+
+  # DPU throughput GOPS
+  map_w_to_througput_DPU= {
+     'tretail'            :3.2279686469855693,
+     'mnist'              :5.714442493415277 ,
+     'nltcs'              :4.254714624703385 ,
+     'msweb'              :5.497139773340529 ,
+     'msnbc'              :4.85417179424071  ,
+     'bnetflix'           :4.80075056728923  ,
+     'HB_bp_200'          :2.1350198110332217,
+     'HB_west2021'        :2.74123043712898  ,
+     'MathWorks_Sieber'   :3.90464757331504  ,
+     'HB_jagmesh4'        :1.9240511974312091,
+     'Bai_rdb968'         :1.8668534369059206,
+     'Bai_dw2048'         :2.577926343448042 ,
+  }
+  for w, t in map_w_to_througput_DPU.items():
+    system.append('DPU')
+    throughput.append(t)
+    workload.append(w)
+
+  data_d= {
+    'system' : system,
+    'throughput': throughput,
+    'workload' : workload,
+  }
+  df = pd.DataFrame.from_dict(data_d)
+
+  # plotting
+  fig_dims = (2.8, 2.4)
+  plt.figure(figsize=fig_dims) 
+
+  sns.set(style= 'white')
+  sns.set_context('paper')
+  sns.set_style({'font.family' : 'STIXGeneral'})
+
+  order= [
+    'tretail'         ,
+    'mnist'           ,
+    'nltcs'           ,
+    'msweb'           ,
+    'msnbc'           ,
+    'bnetflix'        ,
+    'HB_bp_200'       ,
+    'HB_west2021'     ,
+    'MathWorks_Sieber',
+    'HB_jagmesh4'     ,
+    'Bai_rdb968'      ,
+    'Bai_dw2048'      ,
+  ]
+
+  hue_order= ['This work', 'DPU']
+  ax= sns.barplot(x= 'workload', y= 'throughput', hue= 'system', orient= 'v', data=df, order= order, hue_order = hue_order,
+      ci= None, # No error margins
+      estimator= mean
+      )
+
+  ax.set_ylim([0,10])
+
+  ax.set_xticks(list(range(len(order))))
+  ax.set_xticklabels(
+    [
+      'tretail'         ,
+      'mnist'           ,
+      'nltcs'           ,
+      'msweb'           ,
+      'msnbc'           ,
+      'bnetflix'        ,
+      'bp_200'       ,
+      'west2021'     ,
+      'sieber',
+      'jagmesh4'     ,
+      'rdb968'      ,
+      'dw2048'      ,
+    ]
+  )
+  
+  plt.xticks(rotation = 90)
+
+  # ax.set_ylim([0,119])
+  # labels= [4, 8, 16, 32, 64]
+  # h, l= ax.get_legend_handles_labels()
+  # ax.legend(h, labels, title= "Threads")
+  # ax.legend(h, l, title= "")
+  ax.legend(ncol= 2, loc= 'upper center')
+  # ax.legend(ncol= 1, bbox_to_anchor= (1.2, 0.5))
+  # ax.legend([], [])
+  plt.tight_layout()
+  plt.ylabel('')
+  plt.xlabel('')
+
+  if savefig:
+    assert path != None
+    plt.savefig(path, dpi =300)
+  else:
+    plt.show()
 

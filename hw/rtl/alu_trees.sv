@@ -73,7 +73,6 @@ module alu (
       PASS_1    : out_d= 'x;
       default : begin 
         out_d = 'x;
-        $warning(1);
       end
     endcase
   end

@@ -11,7 +11,6 @@ class Init;
   string net= "asia";
   localparam INIT_DEBUG= 0;
   localparam bit_len =32;
-  /* string prefix="./no_backup/new_data_layer_wise/"; */
   string prefix="./no_backup/data/";
   string suffix= "";
   int target_last_instr_addr= 0;
@@ -22,14 +21,6 @@ class Init;
     this.prefix= get_fname_prefix();
 
     $value$plusargs("NET_NAME=%s", net);
-    /* $value$plusargs("PREFIX=%s", prefix); */
-    /* prefix = {prefix, net, "/"}; */
-    /* $display("Simulating netowrk: %s at path: %s, with D=%0d and N=%0d\n", net, prefix, TREE_DEPTH, N_TREE); */
-
-    /* $sformat(this.suffix, "D%0d_N%0d_%0d_%0d_%0d_%0d_%0d_%0d%0d2%0d.00.00.0300False", TREE_DEPTH, N_TREE, N_BANKS, BANK_DEPTH, (2**DATA_MEM_ADDR_L), DATA_MEM_ADDR_L, BIT_L, PIPE_STAGES, TREE_DEPTH, PIPE_STAGES * 7); */
-    /* /1* $sformat(this.suffix, "_%0d_%0d_%0d_%0d_%0db", N_PE, 2**LOCAL_MEM_ADDR_L, GLOBAL_MEM_BANK_DEPTH, REGBANK_SIZE, this.bit_len); *1/ */
-    /* /1* $sformat(this.suffix, "_%0d_%0d_%0d_%0db", 2**LOCAL_MEM_ADDR_L, GLOBAL_MEM_BANK_DEPTH, REGBANK_SIZE, this.bit_len); *1/ */
-    /* $display(this.suffix); */
     $display("INSTR_L : %0d, INSTR_L_MACRO_ADJUSTED: %0d, INSTR_MEM_DEPTH: %d\n", INSTR_L, INSTR_L_MACRO_ADJUSTED, INSTR_MEM_DEPTH);
   endfunction : new
 
@@ -160,8 +151,6 @@ class Init;
       ifc.cb.init_instr_we <= 1;
       repeat(1) @(ifc.cb);
       ifc.cb.init_instr_we <= 0;
-      /* ifc.cb.init_instr_addr <= 'x; */
-      /* ifc.cb.init_instr <= 'x; */
     end
     $display("Initialized ping buffer, target_last_instr_addr = %0d\n", target_last_instr_addr);
 
@@ -253,7 +242,7 @@ class Init;
     `ifdef GATE_NETLIST
       fd= $fopen("latency_netlist_2.txt", "a");
     `else
-      fd= $fopen("latency.txt", "a");
+      fd= $fopen("../../out/reports/rtl_latency.txt", "a+");
     `endif
     $fdisplay(fd, "NET, %s, N_TREE, %0d, TREE_DEPTH, %0d, N_BANKS, %0d, REG_BANK_DEPTH, %0d, PIPE_STAGES, %0d, DATA_MEM_ADDR_L, %0d, INSTR_L, %0d, BIT_L, %0d,latency (clock cycles), %.2f, clock period (ns), %.2f", this.net, N_TREE, TREE_DEPTH, N_BANKS, BANK_DEPTH, PIPE_STAGES, DATA_MEM_ADDR_L, INSTR_L, BIT_L, run_time/CLK_PERIOD, CLK_PERIOD);
     $fclose(fd);
@@ -278,16 +267,6 @@ class Init;
     repeat(1) @(this.ifc.cb);
     ifc.cb.enable_execution <= 1;
 
-    //// Randomly disable execution;
-    //repeat(rand_delay) @(this.ifc.cb);
-    //ifc.cb.enable_execution_io <= 0;
-    //repeat(20) @(this.ifc.cb);
-    //ifc.cb.enable_execution_io <= 1;
-    
-    //repeat(N_PE * (2**(stream_pkg::INSTR_STR_ADDR_L))) @(this.ifc.cb);
-    //repeat(2000) @(this.ifc.cb);
-    //$finish;
-    
     fork
       begin
         forever begin
@@ -316,14 +295,15 @@ class Init;
     $display("Time statistics: ");
 
     $display("start time, end time, run_time: %t, %t, %t\n", start_time, end_time, run_time);
-    $display("clk_cycles,%.2f\n", (run_time/CLK_PERIOD));
+    $display("clk_cycles,%0d\n", (run_time/CLK_PERIOD));
 
     `ifdef GATE_NETLIST
       fd= $fopen("latency_netlist_2.txt", "a");
     `else
-      fd= $fopen("latency.txt", "a");
+      /* fd= $fopen("latency.txt", "a"); */
+      fd= $fopen("../../out/reports/rtl_latency.txt", "a+");
     `endif
-    $fdisplay(fd, "NET, %s, N_TREE, %0d, TREE_DEPTH, %0d, N_BANKS, %0d, REG_BANK_DEPTH, %0d, PIPE_STAGES, %0d, DATA_MEM_ADDR_L, %0d, INSTR_L, %0d, BIT_L, %0d,latency (clock cycles), %.2f, clock period (ns), %.2f", this.net, N_TREE, TREE_DEPTH, N_BANKS, BANK_DEPTH, PIPE_STAGES, DATA_MEM_ADDR_L, INSTR_L, BIT_L, run_time/CLK_PERIOD, CLK_PERIOD);
+    $fdisplay(fd, "NET, %s, N_TREE, %0d, TREE_DEPTH, %0d, N_BANKS, %0d, REG_BANK_DEPTH, %0d, PIPE_STAGES, %0d, DATA_MEM_ADDR_L, %0d, INSTR_L, %0d, BIT_L, %0d,latency (clock cycles), %0d, clock period (ns), %.2f", this.net, N_TREE, TREE_DEPTH, N_BANKS, BANK_DEPTH, PIPE_STAGES, DATA_MEM_ADDR_L, INSTR_L, BIT_L, run_time/CLK_PERIOD, CLK_PERIOD);
     $fclose(fd);
   endtask : execute
 
