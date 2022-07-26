@@ -5,13 +5,13 @@ echo "  Generating instructions for input DAGs"
 echo "  This can take 3-4 hours"
 echo "  Log is captured in ./run.log"
 echo "============================================="
-python main.py --tmode compile &>> ./run.log
+python -O main.py --tmode compile &>> ./run.log
 echo "============================================="
 echo "Done generating instructions"
 echo "Launching RTL simulations"
 echo "============================================="
 cd ./hw/tb
-make compile
+make compile &>> ../../run.log
 make run NET=tretail          W_CONFLICT=150  &>> ../../run.log
 make run NET=mnist            W_CONFLICT=50   &>> ../../run.log
 make run NET=nltcs            W_CONFLICT=225  &>> ../../run.log

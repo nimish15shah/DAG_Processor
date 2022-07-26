@@ -169,6 +169,7 @@ class graph_analysis_c():
         schedule_param_obj= schedule_param(hw_details.SCHEDULING_SEARCH_WINDOW, hw_details.RANDOM_BANK_ALLOCATE)
 
         # -- perform scheduling
+        misc= {}
         instr_ls_obj, map_param_to_addr, map_output_to_addr= scheduling_gather.instruction_gen(net, self.graph, self.BB_graph, self.global_var,\
             self.leaf_list, self.head_node, misc, hw_details,\
             write_asm= False, make_vid= False)  
@@ -456,6 +457,48 @@ def plot_throughput(log_path, plot_path, log_d, savefig):
     throughput.append(t)
     workload.append(w)
 
+  # CPU throughput GOPS
+  map_w_to_througput_CPU= {
+    'tretail'   : 0.728450357 ,
+    'mnist'      : 1.004476778,
+    'nltcs'      : 0.6148137  ,
+    'msweb'      : 1.149600369,
+    'msnbc'      : 1.219404051,
+    'bnetflix'   : 1.136445194,
+
+    'HB_bp_200'        :  1.423780539,
+    'HB_west2021'      :  2.118665295,
+    'MathWorks_Sieber' :  1.689396699,
+    'HB_jagmesh4'      :  3.1588826560000003,
+    'Bai_rdb968'       :  2.3725333770000003,
+    'Bai_dw2048'       :  2.776259469,
+
+  }
+  for w, t in map_w_to_througput_CPU.items():
+    system.append('CPU')
+    throughput.append(t)
+    workload.append(w)
+
+  # GPU throughput GOPS
+  map_w_to_througput_GPU= {
+     'tretail'           : 0.1268240035,
+     'mnist'              : 0.2215414725,
+     'nltcs'              : 0.2709091271,
+     'msweb'              : 0.3007138345,
+     'msnbc'              : 0.4177278865,
+     'bnetflix'           : 0.3263541976,
+     'HB_bp_200'          : 0.07715456,
+     'HB_west2021'        : 0.136452219,
+     'MathWorks_Sieber'   : 0.12612115699999998,
+     'HB_jagmesh4'        : 0.13689373800000001,
+     'Bai_rdb968'         : 0.123238859,
+     'Bai_dw2048'         : 0.157974773,
+  }
+  for w, t in map_w_to_througput_GPU.items():
+    system.append('GPU')
+    throughput.append(t)
+    workload.append(w)
+
   data_d= {
     'system' : system,
     'throughput': throughput,
@@ -486,7 +529,7 @@ def plot_throughput(log_path, plot_path, log_d, savefig):
     'Bai_dw2048'      ,
   ]
 
-  hue_order= ['This work', 'DPU']
+  hue_order= ['This work', 'DPU', 'CPU', 'GPU']
   ax= sns.barplot(x= 'workload', y= 'throughput', hue= 'system', orient= 'v', data=df, order= order, hue_order = hue_order,
       ci= None, # No error margins
       estimator= mean
@@ -527,8 +570,8 @@ def plot_throughput(log_path, plot_path, log_d, savefig):
   plt.xlabel('')
 
   if savefig:
-    assert path != None
-    plt.savefig(path, dpi =300)
+    assert plot_path != None
+    plt.savefig(plot_path, dpi =300)
   else:
     plt.show()
 
