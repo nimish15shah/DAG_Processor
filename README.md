@@ -5,7 +5,7 @@ The paper proposes a customized parallel architecture for energy-efficient execu
 ### This codebase includes the following components:
 1) SystemVerilog-based microarchitectural RTL model of the processor (at [./hw/rtl/](https://github.com/nimish15shah/DAG_Processor/tree/main/hw/rtl)) and a testbench (at [./hw/tb/](https://github.com/nimish15shah/DAG_Processor/tree/main/hw/tb)).
 2) A Python-based compiler (at [./src/](https://github.com/nimish15shah/DAG_Processor/tree/main/src)).
-3) Input DAGs for the experiments in the paper (at [./data/](https://github.com/nimish15shah/DAG_Processor/tree/main/data))
+3) Input DAGs to reproduce the experiments (at [./data/](https://github.com/nimish15shah/DAG_Processor/tree/main/data))
 
 ### Dependencies
 * Anaconda3: For Linux installation, see https://docs.anaconda.com/anaconda/install/linux/#installation
