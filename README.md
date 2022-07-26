@@ -2,6 +2,9 @@
 
 The paper proposes a customized parallel architecture for energy-efficient execution of irregular directed acyclic graphs (DAG) from probabilistic machine learning and sparse linear algebra. A targeted compiler is developed to generate a binary program for the custom processor given an arbitrary DAG.
 
+#### Aim of the experiments
+The processor performance reported in the paper are reproduced through SystemVerilog RTL simulation. The processor instructions for the target workloads are generated with the custom compiler, also validating the compilation algorithm.
+
 ### This codebase includes the following components:
 1) SystemVerilog-based microarchitectural RTL model of the processor (at [./hw/rtl/](https://github.com/nimish15shah/DAG_Processor/tree/main/hw/rtl)) and a testbench (at [./hw/tb/](https://github.com/nimish15shah/DAG_Processor/tree/main/hw/tb)).
 2) A Python-based compiler (at [./src/](https://github.com/nimish15shah/DAG_Processor/tree/main/src)).
@@ -12,14 +15,15 @@ The paper proposes a customized parallel architecture for energy-efficient execu
 * Synopsys VCS simulator: Used for SystemVerilog simulation.
 
 ### Installation
+Run the following commands to clone this repository and setup python dependencies. This script assumes that
 ```
 git clone git@github.com:nimish15shah/DAG_Processor.git
 cd DAG_Processor
 ./install.sh
 ```
-The script creates a conda enviornment and install the required python dependencies.
+The installation script creates a conda enviornment and install the required python dependencies.
 
-### Run experiments
+### Runnning experiments
 ```
 ./run.sh
 ```
