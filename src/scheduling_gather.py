@@ -313,7 +313,7 @@ def print_instr_breakup_1(instr_ls):
   """
     Display instruction breakup
   """
-  print("Total cyclses:", len(instr_ls)) 
+  print("Total cycles:", len(instr_ls)) 
 
   print("Node blocks:", len([idx for idx, obj in enumerate(instr_ls) if obj.is_type('bb')]))
   
@@ -339,7 +339,7 @@ def print_instr_breakup(global_var, net, instr_ls_obj, conflicts_in, conflicts_o
   
   conflicts= conflicts_in + conflicts_out + conflicts_ld
 
-  print("Total cyclses:", len(instr_ls_obj.instr_ls)) 
+  print("Total cycles:", len(instr_ls_obj.instr_ls)) 
 
   print("Node blocks:", len([idx for idx, obj in enumerate(instr_ls_obj.instr_ls) if obj.is_type('bb')]))
   
