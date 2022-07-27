@@ -1,9 +1,18 @@
 #!/bin/bash
 
-command -v conda >/dev/null 2>&1 || { echo >&2 "ERROR: conda is not installed. Please install it before running this script. Aborting."; exit 1; }
+if [ "$1" = "noconda" ]; then
+	echo "Not using Conda but a Python virtual environment"
+else
+	command -v conda >/dev/null 2>&1 || { echo >&2 "ERROR: conda is not installed. Please install it before running this script. Aborting."; exit 1; }
+fi
 command -v vcs >/dev/null 2>&1 || { echo >&2 "ERROR: Synopsys VCS is not installed. Please install it before running this script. Aborting."; exit 1; }
 
-conda activate DAGprocessor
+if [ "$1" = "noconda" ]; then
+	source ./venv_DAGprocessor/bin/activate
+	python --version
+else
+	conda activate DAGprocessor
+fi
 echo "============================================="
 echo "  Generating instructions for input DAGs"
 echo "  This can take 6-7 hours"
