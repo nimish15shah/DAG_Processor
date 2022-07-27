@@ -22,7 +22,7 @@ git clone git@github.com:nimish15shah/DAG_Processor.git
 cd DAG_Processor
 ./install.sh
 ```
-The installation script creates a conda enviornment and install the required python dependencies.
+The installation script creates a conda enviornment and installs the required python dependencies.
 
 ### Runnning experiments
 ```
