@@ -20,7 +20,9 @@ The processor performance reported in the paper are reproduced through SystemVer
 # Installation
 git clone git@github.com:nimish15shah/DAG_Processor.git
 cd DAG_Processor
-./install.sh
+conda create -y --name DAGprocessor python==3.7.7
+conda install -f -y -q --name DAGprocessor -c conda-forge --file requirements.txt
+
 # Run experiments
 ./run.sh 
 ```
