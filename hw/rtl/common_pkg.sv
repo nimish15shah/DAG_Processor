@@ -24,14 +24,14 @@
 `ifndef HW_CONFIG_PKG
   `define HW_CONFIG_PKG
   /* `define REG_BANK_DEPTH 32 */
-  `define REG_BANK_DEPTH 32
+  //`define REG_BANK_DEPTH 32
   /* `define TREE_DEPTH 2 */
   /* `define N_TREE 8 */
-  `define TREE_DEPTH 3
-  `define MIN_DEPTH 2
-  `define N_TREE 8
-  `define DATA_MEM_SIZE 512 // KB
-  `define INSTR_MEM_SIZE 2048 // KB
+  //`define TREE_DEPTH 3
+  //`define MIN_DEPTH 2
+  //`define N_TREE 8
+  //`define DATA_MEM_SIZE 512 // KB
+  //`define INSTR_MEM_SIZE 2048 // KB
   /* `define DATA_MEM_SIZE 4096 // KB */
   /* `define INSTR_MEM_SIZE 8192 // KB */
   /* `define DATA_MEM_SIZE 2048 // KB */

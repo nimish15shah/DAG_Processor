@@ -9,7 +9,20 @@ FNAME?= ./testbench_top.sv
 NET?=tretail
 PREFIX?=../../out/instr/
 W_CONFLICT?=35
+TREE_DEPTH?=3
+REG_BANK_DEPTH?=32
+MIN_DEPTH?=2
+N_TREE?=8
+DATA_MEM_SIZE?=512 #KB
+INSTR_MEM_SIZE?=2048 #KB
 # EXTRA_ARGS?=+define+INSTR_PING_PONG
+EXTRA_ARGS?=\
+  +define+TREE_DEPTH=$(TREE_DEPTH) \
+  +define+REG_BANK_DEPTH=$(REG_BANK_DEPTH) \
+  +define+MIN_DEPTH=$(MIN_DEPTH) \
+  +define+N_TREE=$(N_TREE) \
+  +define+DATA_MEM_SIZE=$(DATA_MEM_SIZE) \
+  +define+INSTR_MEM_SIZE=$(INSTR_MEM_SIZE)
 
 makeDirs= mkdir -p out log no_backup no_backup/tmp csrc
 

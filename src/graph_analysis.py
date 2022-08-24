@@ -191,7 +191,15 @@ class graph_analysis_c():
 
     if mode=="plot_charts":
       # Plot instruction breakdown
-      hw = design_explore.HwConf(8, 3, 2, 32)
+      self.hw_depth = clog2(args.banks)
+      n_banks = args.banks
+      max_depth = args.depth
+      min_depth = min(max_depth, 2)
+      reg_bank_depth = args.regs
+      out_mode = 'ALL'
+      n_tree = int(n_banks / (2**max_depth))
+
+      hw = design_explore.HwConf(n_tree, max_depth, min_depth, reg_bank_depth)
       log_obj = design_explore.LogInfo(hw)
       log_d= {}
       log_d[hw.tuple_for_key()] = log_obj
@@ -199,7 +207,7 @@ class graph_analysis_c():
 
       path= global_var.PLOTS_PATH + 'instruction_breakdown.pdf'
       savefig= True
-      tup = (8, 3, 32)
+      tup = (n_tree, max_depth, reg_bank_depth)
       design_explore.plot_instr_stat_all_w(log_d, tup, savefig, path)
 
       # Plot throughput
