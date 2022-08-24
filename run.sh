@@ -4,6 +4,7 @@ set -e
 depth=3
 banks=64
 regs=32
+echo "Architecture configuration: D=${depth}, B=${banks}, and R=${regs}"
 novcs=0
 if [ "$1" = "noconda" ]; then
 	echo "Not using Conda but a Python virtual environment"
@@ -23,11 +24,12 @@ echo "  Log is captured in ./run.log"
 echo "============================================="
 python -O main.py --tmode compile --depth ${depth} --banks ${banks} --regs ${regs} &>> ./run.log
 echo "Done generating instructions"
-if [ ${novcs} = 1 ]; then
+if [ ${novcs} = 0 ]; then
 	echo "Launching RTL simulations"
 	cd ./hw/tb
-	min_depth= ${depth} > 1 ? 2 : 1
-	n_tree= (${banks} / (2**$depth))
+  min_depth=$((depth > 1 ? 2 : 1))
+  banks_per_tree=$((2**depth))
+  n_tree=$((banks / banks_per_tree))
 	make compile TREE_DEPTH=$depth MIN_DEPTH=${min_depth} N_TREE=${n_tree} REG_BANK_DEPTH=${regs} >> ../../run.log
 	make run NET=tretail          W_CONFLICT=150  >> ../../run.log
 	make run NET=mnist            W_CONFLICT=50   >> ../../run.log
