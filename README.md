@@ -16,7 +16,7 @@ The processor performance reported in the paper are reproduced through SystemVer
 * (Optional) Anaconda3: For Linux installation, see https://docs.anaconda.com/anaconda/install/linux/#installation
 * For the flow without Anaconda3, Pthon 3.7.7 should be used. Later vesions may also work, but this flow is tested with 3.7.7.
 
-## With Anaconda
+## With Anaconda (Recommended)
 ```
 # Installation
 git clone git@github.com:nimish15shah/DAG_Processor.git
