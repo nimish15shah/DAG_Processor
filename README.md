@@ -21,10 +21,10 @@ The processor performance reported in the paper are reproduced through SystemVer
 # Installation
 git clone git@github.com:nimish15shah/DAG_Processor.git
 cd DAG_Processor
-conda create -y --name DAGprocessor python==3.7.7
-conda install -f -y -q --name DAGprocessor -c conda-forge --file requirements.txt
+conda create --name DAGprocessor --file conda-linux-64.yml
 
 # Run experiments
+conda activate DAGprocessor
 ./run.sh 
 ```
 
@@ -35,7 +35,7 @@ You can also run the experiment without Anaconda but using a Python virtual envi
 git clone git@github.com:nimish15shah/DAG_Processor.git
 cd DAG_Processor
 python3 -m venv venv_DAGprocessor
-. ./venv_DAGprocessor/bin/activate
+./venv_DAGprocessor/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
