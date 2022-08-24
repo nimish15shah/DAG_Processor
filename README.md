@@ -14,6 +14,7 @@ The processor performance reported in the paper are reproduced through SystemVer
 * Synopsys VCS simulator (proprietary): Used for SystemVerilog simulation.
 * Bash, version 4 (or zsh)
 * (Optional) Anaconda3: For Linux installation, see https://docs.anaconda.com/anaconda/install/linux/#installation
+* For the flow without Anaconda3, Pthon 3.7.7 should be used. Later vesions may also work, but this flow is tested with 3.7.7.
 
 ## With Anaconda
 ```
@@ -28,7 +29,7 @@ conda install -f -y -q --name DAGprocessor -c conda-forge --file requirements.tx
 ```
 
 ## Without Anaconda
-You can also run the experiment without Anaconda but using a Python virtual environment using the following instructions:
+You can also run the experiment without Anaconda but using a Python virtual environment (Python version 3.7.7 is recommended):
 ```
 # Installation
 git clone git@github.com:nimish15shah/DAG_Processor.git
@@ -44,7 +45,7 @@ pip install -r requirements.txt
 
 **Disk space requirement**: Less than 200MB (not including Anaconda and Synopsys VCS installation).
 
-**Experiments runtime**: 6-8 hours.
+**Experiments runtime**: 3-4 hours.
 
 **With zsh**: Run the script as `zsh run.sh` or `zsh run.sh noconda` .
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 if [ "$1" = "noconda" ]; then
 	echo "Not using Conda but a Python virtual environment"
 else
@@ -15,7 +16,7 @@ else
 fi
 echo "============================================="
 echo "  Generating instructions for input DAGs"
-echo "  This can take 6-7 hours"
+echo "  This can take 3-4 hours"
 echo "  Log is captured in ./run.log"
 echo "============================================="
 python -O main.py --tmode compile &>> ./run.log
